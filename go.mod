@@ -2,10 +2,12 @@ module github.com/ab36245/go-db
 
 go 1.24.4
 
-require go.mongodb.org/mongo-driver/v2 v2.2.2
+require (
+	github.com/ab36245/go-codec v0.0.0-00010101000000-000000000000
+	go.mongodb.org/mongo-driver/v2 v2.2.2
+)
 
 require (
-	github.com/ab36245/go-codec v0.0.0-00010101000000-000000000000 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
