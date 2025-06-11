@@ -8,8 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
 	"github.com/ab36245/go-codec"
-	"github.com/ab36245/go-db/source"
-	"github.com/ab36245/go-db/target"
 )
 
 func NewTable[T any](db *Database, name string, codec codec.Codec[T]) *Table[T] {
@@ -45,8 +43,8 @@ func (t *Table[T]) Find() ([]T, error) {
 		if err := cursor.Decode(&raw); err != nil {
 			return nil, fmt.Errorf("raw decode failed: %w", err)
 		}
-		source := source.Object(raw)
-		item, err := t.decode(source)
+		decoder := newObjectDecoder(raw)
+		item, err := t.decode(decoder)
 		if err != nil {
 			return nil, fmt.Errorf("type decode failed: %w", err)
 		}
@@ -56,10 +54,10 @@ func (t *Table[T]) Find() ([]T, error) {
 }
 
 func (t *Table[T]) Insert(record T) error {
-	target := target.Object()
-	t.encode(target, record)
+	encoder := newObjectEncoder()
+	t.encode(encoder, record)
 	ctx := context.TODO()
-	res, err := t.mongo.InsertOne(ctx, target.Value())
+	res, err := t.mongo.InsertOne(ctx, encoder.Value())
 	if err != nil {
 		return err
 	}
@@ -67,10 +65,10 @@ func (t *Table[T]) Insert(record T) error {
 	return nil
 }
 
-func (t *Table[T]) decode(source codec.ObjectSource) (T, error) {
-	return t.codec.Decode(source)
+func (t *Table[T]) decode(decoder *objectDecoder) (T, error) {
+	return t.codec.Decode(decoder)
 }
 
-func (t *Table[T]) encode(target codec.ObjectTarget, record T) {
-	t.codec.Encode(target, record)
+func (t *Table[T]) encode(encoder *objectEncoder, record T) {
+	t.codec.Encode(encoder, record)
 }
