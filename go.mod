@@ -3,7 +3,7 @@ module github.com/ab36245/go-db
 go 1.24.4
 
 require (
-	github.com/ab36245/go-defs v0.0.0-00010101000000-000000000000
+	github.com/ab36245/go-model v0.0.0-00010101000000-000000000000
 	go.mongodb.org/mongo-driver/v2 v2.2.2
 )
 
@@ -19,4 +19,4 @@ require (
 	golang.org/x/text v0.22.0 // indirect
 )
 
-replace github.com/ab36245/go-defs => ../go-defs
+replace github.com/ab36245/go-model => ../go-model
