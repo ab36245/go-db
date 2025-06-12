@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 
-	"github.com/ab36245/go-codec"
+	codec "github.com/ab36245/go-defs"
 )
 
 func NewTable[T any](db *Database, name string, codec codec.Codec[T]) *Table[T] {

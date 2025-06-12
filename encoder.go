@@ -5,7 +5,7 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 
-	"github.com/ab36245/go-codec"
+	codec "github.com/ab36245/go-defs"
 )
 
 func newObjectEncoder() *objectEncoder {
