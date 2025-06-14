@@ -37,27 +37,25 @@ func (t *Table[T]) Find() ([]T, error) {
 		return nil, fmt.Errorf("table '%s' search failed: %w", t.mongo.Name(), err)
 	}
 	defer cursor.Close(ctx)
-	var list []T
+	var records []T
 	for cursor.Next(ctx) {
-		var raw bson.M
-		if err := cursor.Decode(&raw); err != nil {
+		var data bson.M
+		if err := cursor.Decode(&data); err != nil {
 			return nil, fmt.Errorf("raw decode failed: %w", err)
 		}
-		decoder := newDecoder(raw)
-		item, err := t.decode(decoder)
+		record, err := t.decode(data)
 		if err != nil {
 			return nil, fmt.Errorf("type decode failed: %w", err)
 		}
-		list = append(list, item)
+		records = append(records, record)
 	}
-	return list, nil
+	return records, nil
 }
 
 func (t *Table[T]) Insert(record T) error {
-	encoder := newEncoder()
-	t.encode(encoder, record)
 	ctx := context.TODO()
-	res, err := t.mongo.InsertOne(ctx, encoder.Value())
+	data := t.encode(record)
+	res, err := t.mongo.InsertOne(ctx, data)
 	if err != nil {
 		return err
 	}
@@ -65,10 +63,13 @@ func (t *Table[T]) Insert(record T) error {
 	return nil
 }
 
-func (t *Table[T]) decode(decoder *decoder) (T, error) {
+func (t *Table[T]) decode(data bson.M) (T, error) {
+	decoder := newDecoder(data)
 	return t.codec.Decode(decoder)
 }
 
-func (t *Table[T]) encode(encoder *encoder, record T) {
+func (t *Table[T]) encode(record T) bson.M {
+	encoder := newEncoder()
 	t.codec.Encode(encoder, record)
+	return encoder.Value()
 }
