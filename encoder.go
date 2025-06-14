@@ -31,6 +31,10 @@ func (e *objectEncoder) PutInt(name string, value int) {
 	e.putValue(name, encodeInt(value))
 }
 
+func (e *objectEncoder) PutMap(name string, length int, f func(model.MapEncoder)) {
+	e.putValue(name, encodeMap(length, f))
+}
+
 func (e *objectEncoder) PutObject(name string, f func(model.ObjectEncoder)) {
 	e.putValue(name, encodeObject(f))
 }
@@ -73,6 +77,10 @@ func (e *arrayEncoder) PutInt(value int) {
 	e.putValue(encodeInt(value))
 }
 
+func (e *arrayEncoder) PutMap(length int, f func(model.MapEncoder)) {
+	e.putValue(encodeMap(length, f))
+}
+
 func (e *arrayEncoder) PutObject(f func(model.ObjectEncoder)) {
 	e.putValue(encodeObject(f))
 }
@@ -93,6 +101,73 @@ func (e *arrayEncoder) putValue(value any) {
 	e.mongo = append(e.mongo, value)
 }
 
+func newMapEncoder(length int) *mapEncoder {
+	return &mapEncoder{
+		keys:   make([]string, 0, length),
+		values: make([]any, 0, length),
+	}
+}
+
+type mapEncoder struct {
+	keys   []string
+	values []any
+}
+
+func (e *mapEncoder) PutArray(length int, f func(model.ArrayEncoder)) {
+	e.putValue(encodeArray(length, f))
+}
+
+func (e *mapEncoder) PutDate(value time.Time) {
+	e.putValue(encodeDate(value))
+}
+
+func (e *mapEncoder) PutInt(value int) {
+	e.putValue(encodeInt(value))
+}
+
+func (e *mapEncoder) PutKey(value string) {
+	e.putKey(encodeString(value))
+}
+
+func (e *mapEncoder) PutMap(length int, f func(model.MapEncoder)) {
+	e.putValue(encodeMap(length, f))
+}
+
+func (e *mapEncoder) PutObject(f func(model.ObjectEncoder)) {
+	e.putValue(encodeObject(f))
+}
+
+func (e *mapEncoder) PutRef(value model.Ref) {
+	e.putValue(encodeRef(value))
+}
+
+func (e *mapEncoder) PutString(value string) {
+	e.putValue(encodeString(value))
+}
+
+func (e *mapEncoder) Value() bson.M {
+	value := make(bson.M, len(e.keys))
+	for i := range e.keys {
+		k := e.keys[i]
+		v := e.values[i]
+		if v != nil {
+			value[k] = v
+		}
+	}
+	return value
+}
+
+func (e *mapEncoder) putKey(value string) {
+	e.keys = append(e.keys, value)
+}
+
+func (e *mapEncoder) putValue(value any) {
+	for len(e.values) < len(e.keys)-1 {
+		e.values = append(e.values, nil)
+	}
+	e.values = append(e.values, value)
+}
+
 func encodeArray(length int, handler func(model.ArrayEncoder)) bson.A {
 	ae := newArrayEncoder(length)
 	handler(ae)
@@ -111,6 +186,12 @@ func encodeObject(handler func(model.ObjectEncoder)) bson.M {
 	oe := newObjectEncoder()
 	handler(oe)
 	return oe.mongo
+}
+
+func encodeMap(length int, handler func(model.MapEncoder)) bson.M {
+	me := newMapEncoder(length)
+	handler(me)
+	return me.Value()
 }
 
 func encodeRef(value model.Ref) bson.ObjectID {
