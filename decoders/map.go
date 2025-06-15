@@ -25,46 +25,44 @@ type MapDecoder struct {
 }
 
 func (d *MapDecoder) GetArray() (model.ArrayDecoder, error) {
-	return decodeArray(d.getValue())
+	return d.reader().getArray()
 }
 
 func (d *MapDecoder) GetDate() (time.Time, error) {
-	return decodeDate(d.getValue())
+	return d.reader().getDate()
 }
 
 func (d *MapDecoder) GetInt() (int, error) {
-	return decodeInt(d.getValue())
-}
-
-func (d *MapDecoder) GetKey() (string, error) {
-	return decodeString(d.getValue())
+	return d.reader().getInt()
 }
 
 func (d *MapDecoder) GetMap() (model.MapDecoder, error) {
-	return decodeMap(d.getValue())
+	return d.reader().getMap()
 }
 
 func (d *MapDecoder) GetObject() (model.ObjectDecoder, error) {
-	return decodeObject(d.getValue())
+	return d.reader().getObject()
 }
 
 func (d *MapDecoder) GetRef() (model.Ref, error) {
-	return decodeRef(d.getValue())
+	return d.reader().getRef()
 }
 
 func (d *MapDecoder) GetString() (string, error) {
-	return decodeString(d.getValue())
+	return d.reader().getString()
 }
 
 func (d *MapDecoder) Length() int {
 	return len(d.items)
 }
 
-func (d *MapDecoder) getValue() (any, error) {
-	if d.index >= d.Length() {
-		return nil, fmt.Errorf("index %d exceeds length %d", d.index, d.Length())
+func (d *MapDecoder) reader() reader {
+	return func() (any, error) {
+		if d.index >= d.Length() {
+			return nil, fmt.Errorf("index %d exceeds map length %d", d.index, d.Length())
+		}
+		value := d.items[d.index]
+		d.index++
+		return value, nil
 	}
-	val := d.items[d.index]
-	d.index++
-	return val, nil
 }

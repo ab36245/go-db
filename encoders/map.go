@@ -1,6 +1,7 @@
 package encoders
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/ab36245/go-model"
@@ -19,36 +20,32 @@ type MapEncoder struct {
 	values []any
 }
 
-func (e *MapEncoder) PutArray(length int, f func(model.ArrayEncoder)) {
-	e.putValue(encodeArray(length, f))
+func (e *MapEncoder) PutArray(length int, handler model.ArrayHandler) error {
+	return e.writer().putArray(length, handler)
 }
 
-func (e *MapEncoder) PutDate(value time.Time) {
-	e.putValue(encodeDate(value))
+func (e *MapEncoder) PutDate(value time.Time) error {
+	return e.writer().putDate(value)
 }
 
-func (e *MapEncoder) PutInt(value int) {
-	e.putValue(encodeInt(value))
+func (e *MapEncoder) PutInt(value int) error {
+	return e.writer().putInt(value)
 }
 
-func (e *MapEncoder) PutKey(value string) {
-	e.putKey(encodeString(value))
+func (e *MapEncoder) PutMap(length int, handler model.MapHandler) error {
+	return e.writer().putMap(length, handler)
 }
 
-func (e *MapEncoder) PutMap(length int, f func(model.MapEncoder)) {
-	e.putValue(encodeMap(length, f))
+func (e *MapEncoder) PutObject(handler model.ObjectHandler) error {
+	return e.writer().putObject(handler)
 }
 
-func (e *MapEncoder) PutObject(f func(model.ObjectEncoder)) {
-	e.putValue(encodeObject(f))
+func (e *MapEncoder) PutRef(value model.Ref) error {
+	return e.writer().putRef(value)
 }
 
-func (e *MapEncoder) PutRef(value model.Ref) {
-	e.putValue(encodeRef(value))
-}
-
-func (e *MapEncoder) PutString(value string) {
-	e.putValue(encodeString(value))
+func (e *MapEncoder) PutString(value string) error {
+	return e.writer().putString(value)
 }
 
 func (e *MapEncoder) Value() bson.M {
@@ -63,13 +60,28 @@ func (e *MapEncoder) Value() bson.M {
 	return value
 }
 
-func (e *MapEncoder) putKey(value string) {
-	e.keys = append(e.keys, value)
-}
+func (e *MapEncoder) writer() writer {
+	switch {
+	case len(e.keys) == len(e.values):
+		// expecting a key
+		return func(key any) error {
+			switch key := key.(type) {
+			case string:
+				e.keys = append(e.keys, key)
+				return nil
+			default:
+				return fmt.Errorf("key must be a string, got %T", key)
+			}
+		}
 
-func (e *MapEncoder) putValue(value any) {
-	for len(e.values) < len(e.keys)-1 {
-		e.values = append(e.values, nil)
+	case len(e.keys) == len(e.values)+1:
+		// expecting a value
+		return func(value any) error {
+			e.values = append(e.values, value)
+			return nil
+		}
+
+	default:
+		panic("weird map state!")
 	}
-	e.values = append(e.values, value)
 }

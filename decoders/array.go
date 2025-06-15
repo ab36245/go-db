@@ -21,42 +21,54 @@ type ArrayDecoder struct {
 }
 
 func (d *ArrayDecoder) GetArray() (model.ArrayDecoder, error) {
-	return decodeArray(d.getValue())
+	return d.reader().getArray()
 }
 
 func (d *ArrayDecoder) GetDate() (time.Time, error) {
-	return decodeDate(d.getValue())
+	return d.reader().getDate()
 }
 
 func (d *ArrayDecoder) GetInt() (int, error) {
-	return decodeInt(d.getValue())
+	return d.reader().getInt()
 }
 
 func (d *ArrayDecoder) GetMap() (model.MapDecoder, error) {
-	return decodeMap(d.getValue())
+	return d.reader().getMap()
 }
 
 func (d *ArrayDecoder) GetObject() (model.ObjectDecoder, error) {
-	return decodeObject(d.getValue())
+	return d.reader().getObject()
 }
 
 func (d *ArrayDecoder) GetRef() (model.Ref, error) {
-	return decodeRef(d.getValue())
+	return d.reader().getRef()
 }
 
 func (d *ArrayDecoder) GetString() (string, error) {
-	return decodeString(d.getValue())
+	return d.reader().getString()
 }
 
 func (d *ArrayDecoder) Length() int {
 	return len(d.mongo)
 }
 
-func (d *ArrayDecoder) getValue() (any, error) {
-	if d.index >= d.Length() {
-		return nil, fmt.Errorf("index %d exceeds length %d", d.index, d.Length())
+func (d *ArrayDecoder) reader() reader {
+	// return reader{
+	// 	get: func() (any, error) {
+	// 		if d.index >= d.Length() {
+	// 			return nil, fmt.Errorf("index %d exceeds array length %d", d.index, d.Length())
+	// 		}
+	// 		value := d.mongo[d.index]
+	// 		d.index++
+	// 		return value, nil
+	// 	},
+	// }
+	return func() (any, error) {
+		if d.index >= d.Length() {
+			return nil, fmt.Errorf("index %d exceeds array length %d", d.index, d.Length())
+		}
+		value := d.mongo[d.index]
+		d.index++
+		return value, nil
 	}
-	val := d.mongo[d.index]
-	d.index++
-	return val, nil
 }

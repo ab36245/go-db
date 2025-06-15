@@ -17,38 +17,41 @@ type ArrayEncoder struct {
 	mongo bson.A
 }
 
-func (e *ArrayEncoder) PutArray(length int, f func(model.ArrayEncoder)) {
-	e.putValue(encodeArray(length, f))
+func (e *ArrayEncoder) PutArray(length int, handler model.ArrayHandler) error {
+	return e.writer().putArray(length, handler)
 }
 
-func (e *ArrayEncoder) PutDate(value time.Time) {
-	e.putValue(encodeDate(value))
+func (e *ArrayEncoder) PutDate(value time.Time) error {
+	return e.writer().putDate(value)
 }
 
-func (e *ArrayEncoder) PutInt(value int) {
-	e.putValue(encodeInt(value))
+func (e *ArrayEncoder) PutInt(value int) error {
+	return e.writer().putInt(value)
 }
 
-func (e *ArrayEncoder) PutMap(length int, f func(model.MapEncoder)) {
-	e.putValue(encodeMap(length, f))
+func (e *ArrayEncoder) PutMap(length int, handler model.MapHandler) error {
+	return e.writer().putMap(length, handler)
 }
 
-func (e *ArrayEncoder) PutObject(f func(model.ObjectEncoder)) {
-	e.putValue(encodeObject(f))
+func (e *ArrayEncoder) PutObject(handler model.ObjectHandler) error {
+	return e.writer().putObject(handler)
 }
 
-func (e *ArrayEncoder) PutRef(value model.Ref) {
-	e.putValue(encodeRef(value))
+func (e *ArrayEncoder) PutRef(value model.Ref) error {
+	return e.writer().putRef(value)
 }
 
-func (e *ArrayEncoder) PutString(value string) {
-	e.putValue(encodeString(value))
+func (e *ArrayEncoder) PutString(value string) error {
+	return e.writer().putString(value)
 }
 
 func (e *ArrayEncoder) Value() bson.A {
 	return e.mongo
 }
 
-func (e *ArrayEncoder) putValue(value any) {
-	e.mongo = append(e.mongo, value)
+func (e *ArrayEncoder) writer() writer {
+	return func(value any) error {
+		e.mongo = append(e.mongo, value)
+		return nil
+	}
 }

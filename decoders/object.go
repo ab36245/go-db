@@ -20,37 +20,39 @@ type ObjectDecoder struct {
 }
 
 func (d *ObjectDecoder) GetArray(name string) (model.ArrayDecoder, error) {
-	return decodeArray(d.getValue(name))
+	return d.reader(name).getArray()
 }
 
 func (d *ObjectDecoder) GetDate(name string) (time.Time, error) {
-	return decodeDate(d.getValue(name))
+	return d.reader(name).getDate()
 }
 
 func (d *ObjectDecoder) GetInt(name string) (int, error) {
-	return decodeInt(d.getValue(name))
+	return d.reader(name).getInt()
 }
 
 func (d *ObjectDecoder) GetMap(name string) (model.MapDecoder, error) {
-	return decodeMap(d.getValue(name))
+	return d.reader(name).getMap()
 }
 
 func (d *ObjectDecoder) GetObject(name string) (model.ObjectDecoder, error) {
-	return decodeObject(d.getValue(name))
+	return d.reader(name).getObject()
 }
 
 func (d *ObjectDecoder) GetRef(name string) (model.Ref, error) {
-	return decodeRef(d.getValue(name))
+	return d.reader(name).getRef()
 }
 
 func (d *ObjectDecoder) GetString(name string) (string, error) {
-	return decodeString(d.getValue(name))
+	return d.reader(name).getString()
 }
 
-func (d *ObjectDecoder) getValue(name string) (any, error) {
-	val, ok := d.mongo[name]
-	if !ok {
-		return nil, fmt.Errorf("field '%s': unknown", name)
+func (d *ObjectDecoder) reader(name string) reader {
+	return func() (any, error) {
+		value, ok := d.mongo[name]
+		if !ok {
+			return nil, fmt.Errorf("field '%s': unknown", name)
+		}
+		return value, nil
 	}
-	return val, nil
 }

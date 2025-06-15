@@ -54,7 +54,10 @@ func (t *Table[T]) Find() ([]T, error) {
 
 func (t *Table[T]) Insert(record T) error {
 	ctx := context.TODO()
-	data := t.encode(record)
+	data, err := t.encode(record)
+	if err != nil {
+		return err
+	}
 	res, err := t.mongo.InsertOne(ctx, data)
 	if err != nil {
 		return err
@@ -68,8 +71,10 @@ func (t *Table[T]) decode(data bson.M) (T, error) {
 	return t.codec.Decode(decoder)
 }
 
-func (t *Table[T]) encode(record T) bson.M {
+func (t *Table[T]) encode(record T) (bson.M, error) {
 	encoder := newEncoder()
-	t.codec.Encode(encoder, record)
-	return encoder.Value()
+	if err := t.codec.Encode(encoder, record); err != nil {
+		return nil, err
+	}
+	return encoder.Value(), nil
 }
