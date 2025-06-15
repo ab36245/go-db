@@ -53,19 +53,9 @@ func (d *ArrayDecoder) Length() int {
 }
 
 func (d *ArrayDecoder) reader() reader {
-	// return reader{
-	// 	get: func() (any, error) {
-	// 		if d.index >= d.Length() {
-	// 			return nil, fmt.Errorf("index %d exceeds array length %d", d.index, d.Length())
-	// 		}
-	// 		value := d.mongo[d.index]
-	// 		d.index++
-	// 		return value, nil
-	// 	},
-	// }
 	return func() (any, error) {
 		if d.index >= d.Length() {
-			return nil, fmt.Errorf("index %d exceeds array length %d", d.index, d.Length())
+			return nil, fmt.Errorf("index %d outside array size %d", d.index, d.Length())
 		}
 		value := d.mongo[d.index]
 		d.index++
