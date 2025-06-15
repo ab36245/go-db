@@ -8,20 +8,23 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func NewMapDecoder(mongo bson.M) *MapDecoder {
+func NewMapDecoder(mongo bson.D) *MapDecoder {
+	length := len(mongo)
 	var items []any
-	for k, v := range mongo {
-		items = append(items, k, v)
+	for _, e := range mongo {
+		items = append(items, e.Key, e.Value)
 	}
 	return &MapDecoder{
-		items: items,
-		index: 0,
+		index:  0,
+		items:  items,
+		length: length,
 	}
 }
 
 type MapDecoder struct {
-	items []any
-	index int
+	index  int
+	items  []any
+	length int
 }
 
 func (d *MapDecoder) GetArray() (model.ArrayDecoder, error) {
@@ -53,13 +56,13 @@ func (d *MapDecoder) GetString() (string, error) {
 }
 
 func (d *MapDecoder) Length() int {
-	return len(d.items)
+	return d.length
 }
 
 func (d *MapDecoder) reader() reader {
 	return func() (any, error) {
-		if d.index >= d.Length() {
-			return nil, fmt.Errorf("index %d exceeds map length %d", d.index, d.Length())
+		if d.index >= len(d.items) {
+			return nil, fmt.Errorf("index %d outside total map size %d", d.index, len(d.items))
 		}
 		value := d.items[d.index]
 		d.index++

@@ -39,7 +39,7 @@ func (r reader) getInt() (int, error) {
 }
 
 func (r reader) getMap() (*MapDecoder, error) {
-	value, err := getAs[bson.M](r)
+	value, err := getAs[bson.D](r)
 	if err != nil {
 		return nil, err
 	}

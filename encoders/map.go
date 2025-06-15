@@ -48,14 +48,14 @@ func (e *MapEncoder) PutString(value string) error {
 	return e.writer().putString(value)
 }
 
-func (e *MapEncoder) Value() bson.M {
-	value := make(bson.M, len(e.keys))
+func (e *MapEncoder) Value() bson.D {
+	value := make(bson.D, 0, len(e.keys))
 	for i := range e.keys {
-		k := e.keys[i]
-		v := e.values[i]
-		if v != nil {
-			value[k] = v
+		e := bson.E{
+			Key:   e.keys[i],
+			Value: e.values[i],
 		}
+		value = append(value, e)
 	}
 	return value
 }
