@@ -8,19 +8,14 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-// type writer struct {
-// 	put func(any) error
-// }
-
 type writer func(any) error
 
-func (w writer) putArray(length int, handler model.ArrayHandler) error {
-	encoder := NewArrayEncoder(length)
-	err := handler(encoder)
-	if err != nil {
-		return err
+func (w writer) putArray(length int) (model.ArrayEncoder, error) {
+	e := NewArrayEncoder(length)
+	if err := w(e.mongo); err != nil {
+		return nil, err
 	}
-	return w(encoder.mongo)
+	return e, nil
 }
 
 func (w writer) putDate(value time.Time) error {
@@ -31,22 +26,20 @@ func (w writer) putInt(value int) error {
 	return w(value)
 }
 
-func (w writer) putMap(length int, handler model.MapHandler) error {
-	encoder := NewMapEncoder(length)
-	err := handler(encoder)
-	if err != nil {
-		return err
+func (w writer) putMap(length int) (model.MapEncoder, error) {
+	e := NewMapEncoder(length)
+	if err := w(e.mongo); err != nil {
+		return nil, err
 	}
-	return w(encoder.Value())
+	return e, nil
 }
 
-func (w writer) putObject(handler model.ObjectHandler) error {
-	encoder := NewObjectEncoder()
-	err := handler(encoder)
-	if err != nil {
-		return err
+func (w writer) putObject() (model.ObjectEncoder, error) {
+	e := NewObjectEncoder()
+	if err := w(e.mongo); err != nil {
+		return nil, err
 	}
-	return w(encoder.Value())
+	return e, nil
 }
 
 func (w writer) putRef(value model.Ref) error {

@@ -54,8 +54,9 @@ func (d *ArrayDecoder) Length() int {
 
 func (d *ArrayDecoder) reader() reader {
 	return func() (any, error) {
-		if d.index >= d.Length() {
-			return nil, fmt.Errorf("index %d outside array size %d", d.index, d.Length())
+		max := len(d.mongo)
+		if d.index >= max {
+			return nil, fmt.Errorf("trying to read more than max (%d) values", max)
 		}
 		value := d.mongo[d.index]
 		d.index++

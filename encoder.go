@@ -1,6 +1,8 @@
 package db
 
-import "github.com/ab36245/go-db/encoders"
+import (
+	"github.com/ab36245/go-db/encoders"
+)
 
 func newEncoder() *encoder {
 	return &encoder{

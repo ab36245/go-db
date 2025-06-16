@@ -18,8 +18,8 @@ type ObjectEncoder struct {
 	mongo bson.M
 }
 
-func (e *ObjectEncoder) PutArray(name string, length int, handler model.ArrayHandler) error {
-	return e.writer(name).putArray(length, handler)
+func (e *ObjectEncoder) PutArray(name string, length int) (model.ArrayEncoder, error) {
+	return e.writer(name).putArray(length)
 }
 
 func (e *ObjectEncoder) PutDate(name string, value time.Time) error {
@@ -30,12 +30,12 @@ func (e *ObjectEncoder) PutInt(name string, value int) error {
 	return e.writer(name).putInt(value)
 }
 
-func (e *ObjectEncoder) PutMap(name string, length int, handler model.MapHandler) error {
-	return e.writer(name).putMap(length, handler)
+func (e *ObjectEncoder) PutMap(name string, length int) (model.MapEncoder, error) {
+	return e.writer(name).putMap(length)
 }
 
-func (e *ObjectEncoder) PutObject(name string, handler model.ObjectHandler) error {
-	return e.writer(name).putObject(handler)
+func (e *ObjectEncoder) PutObject(name string) (model.ObjectEncoder, error) {
+	return e.writer(name).putObject()
 }
 
 func (e *ObjectEncoder) PutRef(name string, value model.Ref) error {

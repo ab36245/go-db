@@ -9,22 +9,17 @@ import (
 )
 
 func NewMapDecoder(mongo bson.D) *MapDecoder {
-	length := len(mongo)
-	var items []any
-	for _, e := range mongo {
-		items = append(items, e.Key, e.Value)
-	}
 	return &MapDecoder{
-		index:  0,
-		items:  items,
-		length: length,
+		index:   0,
+		keyNext: true,
+		mongo:   mongo,
 	}
 }
 
 type MapDecoder struct {
-	index  int
-	items  []any
-	length int
+	index   int
+	keyNext bool
+	mongo   bson.D
 }
 
 func (d *MapDecoder) GetArray() (model.ArrayDecoder, error) {
@@ -56,16 +51,24 @@ func (d *MapDecoder) GetString() (string, error) {
 }
 
 func (d *MapDecoder) Length() int {
-	return d.length
+	return len(d.mongo)
 }
 
 func (d *MapDecoder) reader() reader {
 	return func() (any, error) {
-		if d.index >= len(d.items) {
-			return nil, fmt.Errorf("index %d outside total map size %d", d.index, len(d.items))
+		max := len(d.mongo)
+		if d.index >= max {
+			return nil, fmt.Errorf("trying to read more than max (%d) values", max)
 		}
-		value := d.items[d.index]
-		d.index++
+		var value any
+		if d.keyNext {
+			value = d.mongo[d.index].Key
+			d.keyNext = false
+		} else {
+			value = d.mongo[d.index].Value
+			d.index++
+			d.keyNext = true
+		}
 		return value, nil
 	}
 }
