@@ -18,8 +18,12 @@ func (w writer) putArray(length int) (model.ArrayEncoder, error) {
 	return e, nil
 }
 
-func (w writer) putDate(value time.Time) error {
-	return w(bson.NewDateTimeFromTime(value))
+func (w writer) putBool(value bool) error {
+	return w(value)
+}
+
+func (w writer) putFloat(value float64) error {
+	return w(value)
 }
 
 func (w writer) putInt(value int) error {
@@ -52,4 +56,8 @@ func (w writer) putRef(value model.Ref) error {
 
 func (w writer) putString(value string) error {
 	return w(value)
+}
+
+func (w writer) putTime(value time.Time) error {
+	return w(bson.NewDateTimeFromTime(value))
 }

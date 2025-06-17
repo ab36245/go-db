@@ -26,8 +26,12 @@ func (d *MapDecoder) GetArray() (model.ArrayDecoder, error) {
 	return d.reader().getArray()
 }
 
-func (d *MapDecoder) GetDate() (time.Time, error) {
-	return d.reader().getDate()
+func (d *MapDecoder) GetBool() (bool, error) {
+	return d.reader().getBool()
+}
+
+func (d *MapDecoder) GetFloat() (float64, error) {
+	return d.reader().getFloat()
 }
 
 func (d *MapDecoder) GetInt() (int, error) {
@@ -48,6 +52,10 @@ func (d *MapDecoder) GetRef() (model.Ref, error) {
 
 func (d *MapDecoder) GetString() (string, error) {
 	return d.reader().getString()
+}
+
+func (d *MapDecoder) GetTime() (time.Time, error) {
+	return d.reader().getTime()
 }
 
 func (d *MapDecoder) Length() int {

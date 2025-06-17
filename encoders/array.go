@@ -24,8 +24,12 @@ func (e *ArrayEncoder) PutArray(length int) (model.ArrayEncoder, error) {
 	return e.writer().putArray(length)
 }
 
-func (e *ArrayEncoder) PutDate(value time.Time) error {
-	return e.writer().putDate(value)
+func (e *ArrayEncoder) PutBool(value bool) error {
+	return e.writer().putBool(value)
+}
+
+func (e *ArrayEncoder) PutFloat(value float64) error {
+	return e.writer().putFloat(value)
 }
 
 func (e *ArrayEncoder) PutInt(value int) error {
@@ -46,6 +50,10 @@ func (e *ArrayEncoder) PutRef(value model.Ref) error {
 
 func (e *ArrayEncoder) PutString(value string) error {
 	return e.writer().putString(value)
+}
+
+func (e *ArrayEncoder) PutTime(value time.Time) error {
+	return e.writer().putTime(value)
 }
 
 func (e *ArrayEncoder) writer() writer {

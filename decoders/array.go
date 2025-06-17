@@ -24,8 +24,12 @@ func (d *ArrayDecoder) GetArray() (model.ArrayDecoder, error) {
 	return d.reader().getArray()
 }
 
-func (d *ArrayDecoder) GetDate() (time.Time, error) {
-	return d.reader().getDate()
+func (d *ArrayDecoder) GetBool() (bool, error) {
+	return d.reader().getBool()
+}
+
+func (d *ArrayDecoder) GetFloat() (float64, error) {
+	return d.reader().getFloat()
 }
 
 func (d *ArrayDecoder) GetInt() (int, error) {
@@ -46,6 +50,10 @@ func (d *ArrayDecoder) GetRef() (model.Ref, error) {
 
 func (d *ArrayDecoder) GetString() (string, error) {
 	return d.reader().getString()
+}
+
+func (d *ArrayDecoder) GetTime() (time.Time, error) {
+	return d.reader().getTime()
 }
 
 func (d *ArrayDecoder) Length() int {

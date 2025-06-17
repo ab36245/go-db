@@ -22,8 +22,12 @@ func (e *ObjectEncoder) PutArray(name string, length int) (model.ArrayEncoder, e
 	return e.writer(name).putArray(length)
 }
 
-func (e *ObjectEncoder) PutDate(name string, value time.Time) error {
-	return e.writer(name).putDate(value)
+func (e *ObjectEncoder) PutBool(name string, value bool) error {
+	return e.writer(name).putBool(value)
+}
+
+func (e *ObjectEncoder) PutFloat(name string, value float64) error {
+	return e.writer(name).putFloat(value)
 }
 
 func (e *ObjectEncoder) PutInt(name string, value int) error {
@@ -44,6 +48,10 @@ func (e *ObjectEncoder) PutRef(name string, value model.Ref) error {
 
 func (e *ObjectEncoder) PutString(name string, value string) error {
 	return e.writer(name).putString(value)
+}
+
+func (e *ObjectEncoder) PutTime(name string, value time.Time) error {
+	return e.writer(name).putTime(value)
 }
 
 func (e *ObjectEncoder) Value() bson.M {

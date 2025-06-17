@@ -27,8 +27,12 @@ func (e *MapEncoder) PutArray(length int) (model.ArrayEncoder, error) {
 	return e.writer().putArray(length)
 }
 
-func (e *MapEncoder) PutDate(value time.Time) error {
-	return e.writer().putDate(value)
+func (e *MapEncoder) PutBool(value bool) error {
+	return e.writer().putBool(value)
+}
+
+func (e *MapEncoder) PutFloat(value float64) error {
+	return e.writer().putFloat(value)
 }
 
 func (e *MapEncoder) PutInt(value int) error {
@@ -49,6 +53,10 @@ func (e *MapEncoder) PutRef(value model.Ref) error {
 
 func (e *MapEncoder) PutString(value string) error {
 	return e.writer().putString(value)
+}
+
+func (e *MapEncoder) PutTime(value time.Time) error {
+	return e.writer().putTime(value)
 }
 
 func (e *MapEncoder) writer() writer {

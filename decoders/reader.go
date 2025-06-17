@@ -22,12 +22,12 @@ func (r reader) getArray() (*ArrayDecoder, error) {
 	return NewArrayDecoder(value), nil
 }
 
-func (r reader) getDate() (time.Time, error) {
-	value, err := getAs[bson.DateTime](r)
-	if err != nil {
-		return time.Time{}, err
-	}
-	return value.Time(), nil
+func (r reader) getBool() (bool, error) {
+	return getAs[bool](r)
+}
+
+func (r reader) getFloat() (float64, error) {
+	return getAs[float64](r)
 }
 
 func (r reader) getInt() (int, error) {
@@ -63,11 +63,15 @@ func (r reader) getRef() (model.Ref, error) {
 }
 
 func (r reader) getString() (string, error) {
-	value, err := getAs[string](r)
+	return getAs[string](r)
+}
+
+func (r reader) getTime() (time.Time, error) {
+	value, err := getAs[bson.DateTime](r)
 	if err != nil {
-		return "", err
+		return time.Time{}, err
 	}
-	return value, nil
+	return value.Time(), nil
 }
 
 func getAs[T any](getter func() (any, error)) (T, error) {

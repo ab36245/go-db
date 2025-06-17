@@ -23,8 +23,12 @@ func (d *ObjectDecoder) GetArray(name string) (model.ArrayDecoder, error) {
 	return d.reader(name).getArray()
 }
 
-func (d *ObjectDecoder) GetDate(name string) (time.Time, error) {
-	return d.reader(name).getDate()
+func (d *ObjectDecoder) GetBool(name string) (bool, error) {
+	return d.reader(name).getBool()
+}
+
+func (d *ObjectDecoder) GetFloat(name string) (float64, error) {
+	return d.reader(name).getFloat()
 }
 
 func (d *ObjectDecoder) GetInt(name string) (int, error) {
@@ -45,6 +49,10 @@ func (d *ObjectDecoder) GetRef(name string) (model.Ref, error) {
 
 func (d *ObjectDecoder) GetString(name string) (string, error) {
 	return d.reader(name).getString()
+}
+
+func (d *ObjectDecoder) GetTime(name string) (time.Time, error) {
+	return d.reader(name).getTime()
 }
 
 func (d *ObjectDecoder) reader(name string) reader {
