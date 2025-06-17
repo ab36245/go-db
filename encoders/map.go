@@ -31,6 +31,10 @@ func (e *MapEncoder) PutBool(value bool) error {
 	return e.writer().putBool(value)
 }
 
+func (e *MapEncoder) PutBytes(value []byte) error {
+	return e.writer().putBytes(value)
+}
+
 func (e *MapEncoder) PutFloat(value float64) error {
 	return e.writer().putFloat(value)
 }

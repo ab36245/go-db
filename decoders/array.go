@@ -28,6 +28,10 @@ func (d *ArrayDecoder) GetBool() (bool, error) {
 	return d.reader().getBool()
 }
 
+func (d *ArrayDecoder) GetBytes() ([]byte, error) {
+	return d.reader().getBytes()
+}
+
 func (d *ArrayDecoder) GetFloat() (float64, error) {
 	return d.reader().getFloat()
 }

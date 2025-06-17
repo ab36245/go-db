@@ -26,6 +26,10 @@ func (e *ObjectEncoder) PutBool(name string, value bool) error {
 	return e.writer(name).putBool(value)
 }
 
+func (e *ObjectEncoder) PutBytes(name string, value []byte) error {
+	return e.writer(name).putBytes(value)
+}
+
 func (e *ObjectEncoder) PutFloat(name string, value float64) error {
 	return e.writer(name).putFloat(value)
 }

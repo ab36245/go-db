@@ -28,6 +28,10 @@ func (e *ArrayEncoder) PutBool(value bool) error {
 	return e.writer().putBool(value)
 }
 
+func (e *ArrayEncoder) PutBytes(value []byte) error {
+	return e.writer().putBytes(value)
+}
+
 func (e *ArrayEncoder) PutFloat(value float64) error {
 	return e.writer().putFloat(value)
 }

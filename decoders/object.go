@@ -27,6 +27,10 @@ func (d *ObjectDecoder) GetBool(name string) (bool, error) {
 	return d.reader(name).getBool()
 }
 
+func (d *ObjectDecoder) GetBytes(name string) ([]byte, error) {
+	return d.reader(name).getBytes()
+}
+
 func (d *ObjectDecoder) GetFloat(name string) (float64, error) {
 	return d.reader(name).getFloat()
 }

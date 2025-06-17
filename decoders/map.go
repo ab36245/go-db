@@ -30,6 +30,10 @@ func (d *MapDecoder) GetBool() (bool, error) {
 	return d.reader().getBool()
 }
 
+func (d *MapDecoder) GetBytes() ([]byte, error) {
+	return d.reader().getBytes()
+}
+
 func (d *MapDecoder) GetFloat() (float64, error) {
 	return d.reader().getFloat()
 }

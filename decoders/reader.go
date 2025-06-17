@@ -26,6 +26,10 @@ func (r reader) getBool() (bool, error) {
 	return getAs[bool](r)
 }
 
+func (r reader) getBytes() ([]byte, error) {
+	return getAs[[]byte](r)
+}
+
 func (r reader) getFloat() (float64, error) {
 	return getAs[float64](r)
 }

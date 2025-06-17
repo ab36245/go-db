@@ -22,6 +22,10 @@ func (w writer) putBool(value bool) error {
 	return w(value)
 }
 
+func (w writer) putBytes(value []byte) error {
+	return w(value)
+}
+
 func (w writer) putFloat(value float64) error {
 	return w(value)
 }
