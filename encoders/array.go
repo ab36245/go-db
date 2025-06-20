@@ -11,7 +11,7 @@ import (
 func NewArrayEncoder(length int) *ArrayEncoder {
 	return &ArrayEncoder{
 		index: 0,
-		mongo: make(bson.A, length, length),
+		mongo: make(bson.A, length),
 	}
 }
 
