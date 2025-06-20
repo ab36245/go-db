@@ -51,6 +51,9 @@ func (w writer) putObject() (model.ObjectEncoder, error) {
 }
 
 func (w writer) putRef(value model.Ref) error {
+	if value == "" {
+		return nil
+	}
 	id, err := bson.ObjectIDFromHex(string(value))
 	if err != nil {
 		return fmt.Errorf("can't encode %s as ObjectID: %w", value, err)
