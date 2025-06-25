@@ -6,11 +6,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
-
-	codec "github.com/ab36245/go-model"
 )
 
-func NewTable[T any](db *Database, name string, codec codec.Codec[T]) *Table[T] {
+func NewTable[T any](db *Database, name string, codec Codec[T]) *Table[T] {
 	mongo := db.mongo.Collection(name)
 	return &Table[T]{
 		mongo: mongo,
@@ -20,7 +18,7 @@ func NewTable[T any](db *Database, name string, codec codec.Codec[T]) *Table[T] 
 
 type Table[T any] struct {
 	mongo *mongo.Collection
-	codec codec.Codec[T]
+	codec Codec[T]
 }
 
 func (t *Table[T]) Drop() error {
@@ -67,14 +65,9 @@ func (t *Table[T]) Insert(record T) error {
 }
 
 func (t *Table[T]) decode(data bson.M) (T, error) {
-	decoder := newDecoder(data)
-	return t.codec.Decode(decoder)
+	return t.codec.Decode(data)
 }
 
 func (t *Table[T]) encode(record T) (bson.M, error) {
-	encoder := newEncoder()
-	if err := t.codec.Encode(encoder, record); err != nil {
-		return nil, err
-	}
-	return encoder.Value(), nil
+	return t.codec.Encode(record)
 }
